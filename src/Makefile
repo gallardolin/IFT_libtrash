@@ -13,20 +13,14 @@ install: install-libtrash
 
 *.o: Makefile
 
-SRC= main.c helpers.c unlink.c rename.c open-funs.c
-OBJ= main.o helpers.c unlink.o rename.o open-funs.o
+SRC= main.c helpers.c unlink.c ## rename.c ## open-funs.c
+OBJ= main.o helpers.c unlink.o ## rename.o ## open-funs.o
 
 libtrash: libtrash.so.${VERSION}
 
 libtrash.so.${VERSION}: $(SRC) ../libtrash.conf
-	echo CHECKING FOR A WORKING PROC FILESYSTEM...
-	ls -d /proc/self/fd
-	echo GOOD, YOU SEEM TO HAVE A PROC FS
-	$(CC) $(CFLAGS) -o linking-helper linking-helper.c
 	perl -w ../scripts/trimheader.pl
 	perl -w ../scripts/genheader.pl
-	python ../scripts/get_symbol_versions.py
-	rm -f linking-helper
 	perl -w ../scripts/genconf.pl
 	$(CC) $(CFLAGS) $(SRC) -nostartfiles -shared -fPIC -Wl,-soname,libtrash.so.${MAJOR} \
         -o libtrash.so.${VERSION} -ldl
@@ -41,7 +35,6 @@ clean:
 	rm -f *~
 	rm -f ../*~
 	rm -f ../scripts/*~
-	rm -f ../scripts/*.pyc
 	rm -f ../cleanTrash/*~
 	rm -f *.o
 	rm -f libtrash.so.${VERSION}	
